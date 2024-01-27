@@ -1,0 +1,11 @@
+<launch>
+    <!-- Parameters for the serial port and baud rate -->
+    <param name="serial_port" type="string" value="/dev/ttyACM0" />
+    <param name="baud_rate" type="int" value="9600" />
+
+    <!-- Node to send Twist messages serially -->
+    <node name="sensor_node" type="sensor.py" pkg="rov_visualize" output="screen">
+        <param name="serial_port" value="$(arg serial_port)" />
+        <param name="baud_rate" value="$(arg baud_rate)" />
+    </node>
+</launch>
