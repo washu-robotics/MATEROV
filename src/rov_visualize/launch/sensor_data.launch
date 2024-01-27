@@ -5,7 +5,7 @@
 
     <!-- Node to send Twist messages serially -->
     <node name="sensor_node" type="sensor.py" pkg="rov_visualize" output="screen">
-        <param name="serial_port" value="$(arg serial_port)" />
-        <param name="baud_rate" value="$(arg baud_rate)" />
+        <param name="serial_port" value="/dev/ttyACM0" />
+        <param name="baud_rate" value="9600" />
     </node>
 </launch>
