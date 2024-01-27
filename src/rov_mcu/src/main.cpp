@@ -40,7 +40,7 @@ void setup() {
         Fastwire::setup(400, true);
     #endif
 
-    Serial.begin(9600);
+    Serial.begin(57600);
 
     mpu.initialize();
     devStatus = mpu.dmpInitialize();
@@ -123,6 +123,6 @@ void loop() {
         // encode all data satisfying ros sensor_msgs/Imu.msg into json string
         Serial.println("{\"orientation\":{\"w\":" + String(q.w) + ",\"x\":" + String(q.x) + ",\"y\":" + String(q.y) + ",\"z\":" + String(q.z) + "},\"angular_velocity\":{\"x\":" + String(ggWorld.x * mpu.get_gyro_resolution() * DEG_TO_RAD) + ",\"y\":" + String(ggWorld.y * mpu.get_gyro_resolution() * DEG_TO_RAD) + ",\"z\":" + String(ggWorld.z * mpu.get_gyro_resolution() * DEG_TO_RAD) + "},\"linear_acceleration\":{\"x\":" + String(aaWorld.x * mpu.get_acce_resolution() * EARTH_GRAVITY_MS2) + ",\"y\":" + String(aaWorld.y * mpu.get_acce_resolution() * EARTH_GRAVITY_MS2) + ",\"z\":" + String(aaWorld.z * mpu.get_acce_resolution() * EARTH_GRAVITY_MS2) + "}}");
 
-        delay(100);
+        delay(20);
     }
 }

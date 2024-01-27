@@ -15,10 +15,10 @@ def read_serial_data(serial_connection):
 def main():
     rospy.init_node('imu', anonymous=True)
     twist_publisher = rospy.Publisher('/sensors/imu', Imu, queue_size=10)
-    rate = rospy.Rate(50)  # 10 Hz
+    rate = rospy.Rate(50)  # 50 Hz
 
     serial_port = rospy.get_param('~serial_port', '/dev/ttyACM0')
-    baud_rate = rospy.get_param('~baud_rate', 9600)
+    baud_rate = rospy.get_param('~baud_rate', 57600)
     ser = serial.Serial(serial_port, baud_rate, timeout=1)
 
     while not rospy.is_shutdown():
