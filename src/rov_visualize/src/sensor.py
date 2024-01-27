@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import rospy
-from geometry_msgs.msg import Twist
+from sensor_msgs.msg import Imu
 import serial
 import json
 
@@ -13,8 +13,8 @@ def read_serial_data(serial_connection):
     return None
 
 def main():
-    rospy.init_node('json_to_twist', anonymous=True)
-    twist_publisher = rospy.Publisher('/sensors/imu/ypr', Twist, queue_size=10)
+    rospy.init_node('imu', anonymous=True)
+    twist_publisher = rospy.Publisher('/sensors/imu', Imu, queue_size=10)
     rate = rospy.Rate(50)  # 10 Hz
 
     serial_port = rospy.get_param('~serial_port', '/dev/ttyACM0')
@@ -23,22 +23,32 @@ def main():
 
     while not rospy.is_shutdown():
         serial_data = read_serial_data(ser)
+        '''
+        data example: {"orientation":{"w":0.99,"x":-0.00,"y":-0.00,"z":0.11},
+                       "angular_velocity":{"x":0.00,"y":0.00,"z":-0.00},
+                       "linear_acceleration":{"x":0.04,"y":0.13,"z":9.94}}
+        '''
         rospy.loginfo(serial_data)
         if serial_data:
             try:
                 data = json.loads(serial_data)
                 
-                yaw = data['yaw']
-                pitch = data['pitch']
-                roll = data['roll']
+                # create a imu message
+                imu = Imu()
+                imu.header.stamp = rospy.Time.now()
+                imu.header.frame_id = 'imu_link'
+                imu.orientation.w = data['orientation']['w']
+                imu.orientation.x = data['orientation']['x']
+                imu.orientation.y = data['orientation']['y']
+                imu.orientation.z = data['orientation']['z']
+                imu.angular_velocity.x = data['angular_velocity']['x']
+                imu.angular_velocity.y = data['angular_velocity']['y']
+                imu.angular_velocity.z = data['angular_velocity']['z']
+                imu.linear_acceleration.x = data['linear_acceleration']['x']
+                imu.linear_acceleration.y = data['linear_acceleration']['y']
+                imu.linear_acceleration.z = data['linear_acceleration']['z']
+                twist_publisher.publish(imu)
 
-                # Create Twist message
-                twist_msg = Twist()
-                twist_msg.angular.x = roll
-                twist_msg.angular.y = pitch
-                twist_msg.angular.z = yaw
-
-                twist_publisher.publish(twist_msg)
 
             except json.JSONDecodeError:
                 rospy.logerr("Invalid JSON received.")
