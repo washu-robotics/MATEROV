@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import rospy
 from geometry_msgs.msg import Twist
 import serial
@@ -14,8 +14,8 @@ def read_serial_data(serial_connection):
 
 def main():
     rospy.init_node('json_to_twist', anonymous=True)
-    twist_publisher = rospy.Publisher('twist', Twist, queue_size=10)
-    rate = rospy.Rate(10)  # 10 Hz
+    twist_publisher = rospy.Publisher('/sensors/imu/ypr', Twist, queue_size=10)
+    rate = rospy.Rate(50)  # 10 Hz
 
     serial_port = rospy.get_param('~serial_port', '/dev/ttyACM0')
     baud_rate = rospy.get_param('~baud_rate', 9600)
@@ -23,9 +23,11 @@ def main():
 
     while not rospy.is_shutdown():
         serial_data = read_serial_data(ser)
+        rospy.loginfo(serial_data)
         if serial_data:
             try:
                 data = json.loads(serial_data)
+                
                 yaw = data['yaw']
                 pitch = data['pitch']
                 roll = data['roll']
