@@ -1,0 +1,9 @@
+<launch>
+    <!-- Launch the joy node -->
+    <node pkg="joy" type="joy_node" name="joy_node" output="screen">
+        <param name="dev" type="string" value="/dev/input/js0" />
+    </node>
+ 
+    <!-- Launch the custom joy_teleop.py node -->
+    <node name="joy_teleop_node" pkg="rov_teleop" type="joy_teleop.py" output="screen" />
+</launch>
