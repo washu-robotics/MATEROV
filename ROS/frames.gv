@@ -1,0 +1,3 @@
+digraph G {
+"base_link" -> "sensor_frame"[label="Broadcaster: /sensor_broadcaster\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 \nBuffer length: 0.000 sec\n"];
+}

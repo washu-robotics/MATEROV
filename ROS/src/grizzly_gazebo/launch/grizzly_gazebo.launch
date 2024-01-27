@@ -1,0 +1,24 @@
+<launch>
+    <!-- We assume that you have a world file you want to include -->
+    <arg name="world_file" default="$(find grizzly_gazebo)/worlds/grizzly_world.world"/>
+    
+    <!-- Load the Gazebo ROS environment variables -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="world_name" value="$(arg world_file)"/>
+      <arg name="paused" value="false"/>
+      <arg name="use_sim_time" value="true"/>
+      <arg name="gui" value="true"/>
+      <arg name="headless" value="false"/>
+      <arg name="debug" value="false"/>
+    </include>
+    
+    <!-- Include the other launch files -->
+    <include file="$(find grizzly_gazebo)/launch/grizzly_control.launch"/>
+    <include file="$(find grizzly_gazebo)/launch/grizzly_description.launch"/>
+
+    
+    <!-- Spawn the robot in Gazebo -->
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model grizzly" respawn="false" output="screen"/>
+  
+  </launch>
+  

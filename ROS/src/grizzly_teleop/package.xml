@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package>
+  <name>grizzly_teleop</name>
+  <version>1.0.0</version>
+  <description>The grizzly_teleop package</description>
+  <license>Apache-2.0</license>
+  <maintainer email="b.j.wei@wustl.edu">Brian Wei</maintainer>
+ 
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+ 
+  <run_depend>joy</run_depend>
+  <run_depend>rospy</run_depend>
+  <export>
+    <launch file="launch/joystick.launch"/>
+  </export>
+
+</package>

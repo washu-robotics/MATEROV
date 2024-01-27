@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+  <name>grizzly_drive</name>
+  <version>1.0.0</version>
+  <description>The grizzly_drive package</description>
+  <maintainer email="b.j.wei@wustl.edu">Brian Wei</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+ 
+  <run_depend>joy</run_depend>
+  <run_depend>rospy</run_depend>
+</package>
+
+ 

@@ -1,0 +1,10 @@
+<launch>
+  <arg name="frame_rate" default="60"/>
+  <node name="libuvc_camera" pkg="libuvc_camera" type="camera_node" output="screen">
+    <param name="frame_rate" value="$(arg frame_rate)"/> <!-- Set your desired frame rate -->
+    <param name="width" value="640"/> <!-- Set your desired width -->
+    <param name="height" value="480"/> <!-- Set your desired height -->
+    <param name="video_mode" value="mjpeg"/>
+    <param name="device" value="/dev/video0"/>
+  </node>
+</launch>

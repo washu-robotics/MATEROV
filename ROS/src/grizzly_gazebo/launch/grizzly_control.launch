@@ -1,0 +1,12 @@
+<launch>
+
+    <!-- Load the joint state controller and differential drive controller configurations from the control.yaml file -->
+    <rosparam file="$(find grizzly_gazebo)/config/control.yaml" command="load"/>
+      
+    <!-- Spawn the controllers -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"
+          args="controllers/joint_state_controller controllers/diff_drive_controller"/>
+      
+    <!-- Any additional nodes related to the control system can be launched here -->
+
+</launch>

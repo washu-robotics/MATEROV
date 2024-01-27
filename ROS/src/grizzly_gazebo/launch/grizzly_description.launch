@@ -1,0 +1,21 @@
+<launch>
+
+    <!-- Load the robot description parameter -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find grizzly_gazebo)/urdf/grizzly.urdf.xacro'"/>
+    
+    <!-- static transform from the base_link to a sensor frame -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="sensor_broadcaster" args="0 0 1 0 0 0 base_link sensor_frame" />
+
+
+    <!-- Use the robot_state_publisher to publish the robot states -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
+
+    <!-- launch Joint State publisher (don't run if using ros_control) -->
+    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> -->
+
+
+    <!-- launch RViz -->
+    <!-- <node name="rviz" pkg="rviz" type="rviz" args="$(find grizzly_gazebo)/rviz/config.rviz"/> -->
+
+  </launch>
+  

@@ -1,0 +1,33 @@
+controllers:
+# Define the joint state controller
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 20
+
+# Differential drive controller configuration
+  diff_drive_controller:
+    type: "diff_drive_controller/DiffDriveController"
+    
+    left_wheel: ['wheel_fl_joint', 'wheel_ml_joint', 'wheel_rl_joint']
+    right_wheel: ['wheel_fr_joint', 'wheel_mr_joint', 'wheel_rr_joint']
+    
+    wheel_separation: 0.6
+    wheel_radius: 0.1
+
+    pose_covariance_diagonal: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    twist_covariance_diagonal: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    
+    publish_rate: 20
+    cmd_vel_timeout: 0.5
+    
+    enable_odom_tf: true
+    base_frame_id: "base_link"
+    odom_frame_id: "odom"
+    
+    publish_rate: 20
+    allow_multiple_cmd_vel_publishers: true
+    # Velocity and acceleration limits
+    # Any number of velocity and acceleration limits can be set
+    # Typically the number of children these limits apply to is set by wheel_separation and wheel_radius
+
+  # Add other controllers if your robot has arms, sensors, or other components
