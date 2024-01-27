@@ -36,7 +36,7 @@ def main():
                 # create a imu message
                 imu = Imu()
                 imu.header.stamp = rospy.Time.now()
-                imu.header.frame_id = 'imu_link'
+                imu.header.frame_id = 'base_link'
                 imu.orientation.w = data['orientation']['w']
                 imu.orientation.x = data['orientation']['x']
                 imu.orientation.y = data['orientation']['y']
