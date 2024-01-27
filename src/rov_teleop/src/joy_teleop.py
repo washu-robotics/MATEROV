@@ -21,20 +21,20 @@ def joy_callback(data):
     cmd.header.stamp = rospy.Time.now()
 
     # Interpret joystick axes and buttons to control linear and angular velocities
-    cmd.twist.linear.z = data.axes[1]  # Left stick up/down -> z-axis up/down
-    cmd.twist.linear.x = data.axes[3]  # Right stick up/down -> x-axis forward/backward
-    cmd.twist.linear.y = data.axes[2]  # Right stick left/right -> y-axis left/right
-    cmd.twist.angular.z = data.axes[0] # Left stick left/right -> spin around z-axis
+    cmd.twist.linear.y = data.axes[0] # Left stick left/right -> linear y
+    cmd.twist.linear.x = data.axes[1]  # Left stick up/down -> linear x
+    cmd.twist.angular.z = data.axes[3]  # Right stick left/right -> angular z
+    cmd.twist.angular.y = data.axes[4]  # Right stick up/down -> angular y
+
+    if data.buttons[4]:
+        cmd.twist.linear.z = -1.0
+    if data.buttons[5]:
+        cmd.twist.linear.z = 1.0
 
     # Debug: Print interpreted velocities
     #rospy.loginfo("Linear Velocity: {}".format(twist.linear.x))
     #rospy.loginfo("Angular Velocity: {}".format(twist.angular.z))
 
-    # If button 0 (A button on Xbox controller) is pressed, stop the robot
-    #if data.buttons[0]:
-        #twist.linear.x = 0.0
-        #twist.angular.z = 0.0
-        #rospy.loginfo("Stop Command Issued")
 
     # Publish the Twist message to cmd_vel topic
     cmd_vel_pub.publish(cmd)
