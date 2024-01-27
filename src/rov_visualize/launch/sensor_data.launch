@@ -3,11 +3,14 @@
     <param name="serial_port" type="string" value="/dev/ttyACM0" />
     <param name="baud_rate" type="int" value="57600" />
 
-    <!-- Node to send Twist messages serially-->
+    <!-- Node to send Imu messages serially-->
     <node name="sensor_node" type="sensor.py" pkg="rov_visualize" output="screen">
         <param name="serial_port" value="/dev/ttyACM0" />
         <param name="baud_rate" value="57600" />
     </node> 
+
+    <!-- Node to convert Imu messages to tf -->
+    <node name="imu_tf" type="imu_to_tf.py" pkg="rov_visualize" output="screen">
 
     <!-- launch rviz with the urdf model -->
     <arg name="model" default="$(find rov_visualize)/urdf/rov.urdf" />
