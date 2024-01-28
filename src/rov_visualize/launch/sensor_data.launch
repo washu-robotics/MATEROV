@@ -11,6 +11,7 @@
 
     <!-- Node to convert Imu messages to tf -->
     <node name="imu_tf" type="imu_to_tf.py" pkg="rov_visualize" output="screen">
+    </node>
 
     <!-- launch rviz with the urdf model -->
     <arg name="model" default="$(find rov_visualize)/urdf/rov.urdf" />
