@@ -13,6 +13,7 @@ def joy_callback(data):
      # Debug: Print raw joystick data
     #rospy.loginfo("Axes: {}".format(data.axes))
     #rospy.loginfo("Buttons: {}".format(data.buttons))
+    
 
 
     # Create a Twist message to publish
@@ -21,10 +22,12 @@ def joy_callback(data):
     cmd.header.stamp = rospy.Time.now()
 
     # Interpret joystick axes and buttons to control linear and angular velocities
-    cmd.twist.linear.y = data.axes[0] # Left stick left/right -> linear y
+    cmd.twist.linear.y = -1*data.axes[0] # Left stick left/right -> linear y
     cmd.twist.linear.x = data.axes[1]  # Left stick up/down -> linear x
-    cmd.twist.angular.z = data.axes[3]  # Right stick left/right -> angular z
+    cmd.twist.angular.z = -1*data.axes[3]  # Right stick left/right -> angular z
     cmd.twist.angular.y = data.axes[4]  # Right stick up/down -> angular y
+    
+    cmd.twist.angular.x = 0 #stabilize roll velocity
 
     if data.buttons[4]:
         cmd.twist.linear.z = -1.0
@@ -32,8 +35,12 @@ def joy_callback(data):
         cmd.twist.linear.z = 1.0
 
     # Debug: Print interpreted velocities
-    #rospy.loginfo("Linear Velocity: {}".format(twist.linear.x))
-    #rospy.loginfo("Angular Velocity: {}".format(twist.angular.z))
+    #rospy.loginfo("Linear Velocity x: {}".format(cmd.twist.linear.x))
+    #rospy.loginfo("Linear Velocity y: {}".format(cmd.twist.linear.y))
+    #rospy.loginfo("Linear Velocity z: {}".format(cmd.twist.linear.z))
+    #rospy.loginfo("Angular Velocity x: {}".format(cmd.twist.angular.x))
+    #rospy.loginfo("Angular Velocity y: {}".format(cmd.twist.angular.y))
+    #rospy.loginfo("Angular Velocity z: {}".format(cmd.twist.angular.z))
 
 
     # Publish the Twist message to cmd_vel topic
