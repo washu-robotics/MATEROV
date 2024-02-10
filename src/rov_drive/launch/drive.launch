@@ -1,11 +1,11 @@
 <launch>
     <!-- Parameters for the serial port and baud rate -->
     <param name="serial_port" type="string" value="/dev/ttyACM0" />
-    <param name="baud_rate" type="int" value="9600" />
+    <param name="baud_rate" type="int" value="57600" />
 
     <!-- Node to send Twist messages serially -->
-    <node name="drive_node" type="drive.py" pkg="grizzly_drive" output="screen">
-        <param name="serial_port" value="$(arg serial_port)" />
-        <param name="baud_rate" value="$(arg baud_rate)" />
+    <node name="drive_node" type="drive.py" pkg="rov_drive" output="screen">
+        <param name="serial_port" value="/dev/ttyACM0" />
+        <param name="baud_rate" value="57600" />
     </node>
 </launch>

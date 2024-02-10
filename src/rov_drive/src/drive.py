@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import rospy
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import TwistStamped
 import serial
 import json
 
@@ -10,14 +10,14 @@ def twist_callback(data):
     twist = {
         'contorls': {
             'linear': {
-                'x': data.linear.x,
-                'y': data.linear.y,
-                'z': data.linear.z
+                'x': data.twist.linear.x,
+                'y': data.twist.linear.y,
+                'z': data.twist.linear.z
             },
             'angular': {
-                'x': data.angular.x,
-                'y': data.angular.y,
-                'z': data.angular.z
+                'x': data.twist.angular.x,
+                'y': data.twist.angular.y,
+                'z': data.twist.angular.z
             }
         }
     }
@@ -40,7 +40,7 @@ if __name__ == '__main__':
         rospy.loginfo(f'Serial port {serial_port_name} opened successfully at {baud_rate} baud.')
 
         # Subscribe to the cmd_vel topic
-        rospy.Subscriber('/cmd_vel', Twist, twist_callback, queue_size = 15)
+        rospy.Subscriber('/controllers/velocity_controller/cmd_vel', TwistStamped, twist_callback, queue_size = 10)
 
         rospy.spin()  # Keep the node running
 
