@@ -3,13 +3,29 @@
 import rospy
 from geometry_msgs.msg import Twist
 import serial
-import struct
+import json
 
 def twist_callback(data):
-    # Create data packet by packing linear and angular velocities
-    twist_data = struct.pack('<ff', data.linear.x, data.angular.z)
-    # Send the packet through the serial port
-    serial_port.write(twist_data)
+    # pack data to JSON
+    twist = {
+        'contorls': {
+            'linear': {
+                'x': data.linear.x,
+                'y': data.linear.y,
+                'z': data.linear.z
+            },
+            'angular': {
+                'x': data.angular.x,
+                'y': data.angular.y,
+                'z': data.angular.z
+            }
+        }
+    }
+    jsonStr = json.dumps(twist).encode('utf-8')
+    serial_port.write(jsonStr)
+    rospy.loginfo(f'Sent twist command: {jsonStr}')
+    
+
 
 if __name__ == '__main__':
     rospy.init_node('drive_node', anonymous=True)
