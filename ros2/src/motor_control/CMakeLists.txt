@@ -14,9 +14,10 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(serial REQUIRED)
 
 add_executable(thruster src/thruster.cpp)
-ament_target_dependencies(thruster rclcpp std_msgs geometry_msgs)
+ament_target_dependencies(thruster rclcpp std_msgs geometry_msgs serial_sender serial)
 
 INSTALL(TARGETS
   thruster
