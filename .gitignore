@@ -17,7 +17,18 @@ _deps
 /devel
 /build
 
+<<<<<<< Updated upstream
 # ROS 2
 build/
 install/
 log/
+=======
+# platform io
+src/rov_mcu/.pio
+src/rov_mcu/.vscode/.browse.c_cpp.db*
+src/rov_mcu/.vscode/c_cpp_properties.json
+src/rov_mcu/.vscode/launch.json
+src/rov_mcu/.vscode/ipch
+
+.vscode
+>>>>>>> Stashed changes
