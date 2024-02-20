@@ -1,5 +1,14 @@
 # Control ROV
 
+## Installation
+
+You may need to install `libserial-dev`:
+```
+sudo apt-get install libserial-dev
+```
+
+## Launch the ROV:
+```
 Launch joystick control for the ROV:
 ```
 ros2 launch rov joystick.launch.py
