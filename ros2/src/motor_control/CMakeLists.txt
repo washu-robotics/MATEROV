@@ -14,10 +14,13 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(serial REQUIRED)
+
+pkg_check_modules(SERIAL libserial)
 
 add_executable(thruster src/thruster.cpp)
-ament_target_dependencies(thruster rclcpp std_msgs geometry_msgs serial_sender serial)
+target_include_directories(thruster PRIVATE ${SERIAL_INCLUDE_DIRS})
+target_link_libraries(thruster ${SERIAL_LIBRARIES})
+ament_target_dependencies(thruster rclcpp std_msgs geometry_msgs)
 
 INSTALL(TARGETS
   thruster
