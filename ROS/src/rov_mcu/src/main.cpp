@@ -2,6 +2,8 @@
 #include "MPU6050_6Axis_MotionApps20.h"
 #include <Arduino_JSON.h>
 
+#include <Servo.h>
+
 #include <Adafruit_LPS35HW.h>
 
 Adafruit_LPS35HW lps35hw = Adafruit_LPS35HW();
@@ -20,6 +22,7 @@ Adafruit_LPS35HW lps35hw = Adafruit_LPS35HW();
 #endif
 
 MPU6050 mpu;
+Servo motor1;
 
 #define EARTH_GRAVITY_MS2 9.80665  // m/s2
 #define DEG_TO_RAD        0.017453292519943295769236907684886
@@ -51,7 +54,7 @@ void setup() {
         Fastwire::setup(400, true);
     #endif
 
-    Serial.begin(57600);
+    Serial.begin(19200);
 
     mpu.initialize();
     devStatus = mpu.dmpInitialize();
@@ -77,6 +80,10 @@ void setup() {
         dmpReady = true;
         packetSize = mpu.dmpGetFIFOPacketSize();
     }
+
+
+    motor1.attach(3);
+    motor1.writeMicroseconds(1500); // Initialize motor1
 }
 
 void loop() {
@@ -193,8 +200,45 @@ void loop() {
         data["pressure"]["pressure"] = pressure_pressure;
 
         String jsonString = JSON.stringify(data);
-        Serial.println(jsonString);
-
+        // Serial.println(jsonString);
         delay(20);
+        
     }
+    if (Serial.available()) {
+        // Read a string in format "x\n" over serial
+        String input = Serial.readStringUntil('\n');
+
+        Serial.println(input);
+
+        // pharse json string
+        // {"controls": {"linear": {"x": 0.0, "y": 0.0, "z": 0.0}, "angular": {"x": 0.0, "y": 0.0, "z": 0.0}}}
+
+        // Parse the JSON object
+        JSONVar data = JSON.parse(input);
+
+        // Serial.println(data);
+
+        Serial.println(data["controls"]["linear"]["x"]);
+
+
+        //Read pwm duty cycle
+        float linear_x = JSON.stringify(data["controls"]["linear"]["x"]).toFloat();
+
+        Serial.println(linear_x);
+
+        int x = (int)(linear_x * 500 + 1500);
+
+        if (x < 1000  || x > 2000)
+        {
+            Serial.println("bad input");
+        }
+        else
+        {
+            motor1.writeMicroseconds(x);
+            Serial.print("wrote speed1: ");
+            Serial.print(x);
+            Serial.println(" to motor1");
+        }
+    }
+
 }
