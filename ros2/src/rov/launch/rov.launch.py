@@ -18,15 +18,17 @@ def generate_launch_description():
                 )])
     )
 
-    thruster_controller = Node(
-        package='motor_control',
-        executable='thruster',
-        name='thruster_controller',
+    serial_node = Node(
+        package='serial',
+        executable='bidirectional',
+        name='serial_node',
+        parameters=[
+            {'port': '/dev/ttyACM2'},
+        ],
     )
-
 
     return LaunchDescription([
         joystick,
-        thruster_controller,
+        serial_node,
     ])
 

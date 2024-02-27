@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(sensors)
+project(serial)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -17,13 +17,13 @@ find_package(geometry_msgs REQUIRED)
 
 pkg_check_modules(SERIAL libserial)
 
-add_executable(sensors src/sensors.cpp)
-target_include_directories(sensors PRIVATE ${SERIAL_INCLUDE_DIRS})
-target_link_libraries(sensors ${SERIAL_LIBRARIES})
-ament_target_dependencies(sensors rclcpp std_msgs geometry_msgs)
+add_executable(bidirectional src/bidirectional.cpp)
+target_include_directories(bidirectional  PRIVATE ${SERIAL_INCLUDE_DIRS})
+target_link_libraries(bidirectional  ${SERIAL_LIBRARIES})
+ament_target_dependencies(bidirectional  rclcpp std_msgs geometry_msgs)
 
 INSTALL(TARGETS
-  sensors
+  bidirectional 
   DESTINATION lib/${PROJECT_NAME}
 )
 
