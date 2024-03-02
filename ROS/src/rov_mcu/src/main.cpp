@@ -91,22 +91,27 @@ void setup() {
 
 int processThrusterCmd(double x_vel, double y_vel, double z_vel) {
 
+
+    // fixes weird nan issue with old json library
+    // should do nothing now
     // if any of the values are nan, return 1500
     x_vel = isnan(x_vel) ? 0 : x_vel;
     y_vel = isnan(y_vel) ? 0 : y_vel;
     z_vel = isnan(z_vel) ? 0 : z_vel;
+
+    // TODO: implement mixer here
     
 
-  int x_thruster = (int)(x_vel * 500 + 1500); // 1000 - 2000
-  if (x_thruster > 2000) {
-    x_thruster = 2000;
-  } else if (x_thruster < 1000) {
-    x_thruster = 1000;
-  }
+    int x_thruster = (int)(x_vel * 500 + 1500); // 1000 - 2000
+    if (x_thruster > 2000) {
+        x_thruster = 2000;
+    } else if (x_thruster < 1000) {
+        x_thruster = 1000;
+    }
 
-  motor1.writeMicroseconds(x_thruster);
-  Serial.println(x_thruster);
-  return x_thruster;
+    motor1.writeMicroseconds(x_thruster);
+    Serial.println(x_thruster);
+    return x_thruster;
 }
 
 void loop() {
@@ -115,15 +120,6 @@ void loop() {
 
         // display quaternion values in easy matrix form: w x y z
         mpu.dmpGetQuaternion(&q, fifoBuffer);
-        /* Serial.print("quat\t");
-        Serial.print(q.w);
-        Serial.print("\t");
-        Serial.print(q.x);
-        Serial.print("\t");
-        Serial.print(q.y);
-        Serial.print("\t");
-        Serial.println(q.z);
-        */
 
         mpu.dmpGetGravity(&gravity, &q);
 
@@ -131,41 +127,15 @@ void loop() {
         // and rotated based on known orientation from quaternion
         mpu.dmpGetAccel(&aa, fifoBuffer);
         mpu.dmpConvertToWorldFrame(&aaWorld, &aa, &q);
-        /*Serial.print("aworld\t");
-        Serial.print(aaWorld.x * mpu.get_acce_resolution() * EARTH_GRAVITY_MS2);
-        Serial.print("\t");
-        Serial.print(aaWorld.y * mpu.get_acce_resolution() * EARTH_GRAVITY_MS2);
-        Serial.print("\t");
-        Serial.println(aaWorld.z * mpu.get_acce_resolution() * EARTH_GRAVITY_MS2);
-        */
 
         // display initial world-frame acceleration, adjusted to remove gravity
         // and rotated based on known orientation from quaternion
         mpu.dmpGetGyro(&gg, fifoBuffer);
         mpu.dmpConvertToWorldFrame(&ggWorld, &gg, &q);
-        /* Serial.print("ggWorld\t");
-        Serial.print(ggWorld.x * mpu.get_gyro_resolution() * DEG_TO_RAD);
-        Serial.print("\t");
-        Serial.print(ggWorld.y * mpu.get_gyro_resolution() * DEG_TO_RAD);
-        Serial.print("\t");
-        Serial.println(ggWorld.z * mpu.get_gyro_resolution() * DEG_TO_RAD);
-        */
 
         mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-        /*Serial.print("ypr\t");
-        Serial.print(ypr[0] * RAD_TO_DEG);
-        Serial.print("\t");
-        Serial.print(ypr[1] * RAD_TO_DEG);
-        Serial.print("\t");
-        Serial.println(ypr[2] * RAD_TO_DEG);
-        
-        Serial.println();
-        */
 
-        // encode all data satisfying ros sensor_msgs/Imu.msg into json string
-        //Serial.println("{\"orientation\":{\"w\":" + String(q.w) + ",\"x\":" + String(q.x) + ",\"y\":" + String(q.y) + ",\"z\":" + String(q.z) + "},\"angular_velocity\":{\"x\":" + String(ggWorld.x * mpu.get_gyro_resolution() * DEG_TO_RAD) + ",\"y\":" + String(ggWorld.y * mpu.get_gyro_resolution() * DEG_TO_RAD) + ",\"z\":" + String(ggWorld.z * mpu.get_gyro_resolution() * DEG_TO_RAD) + "},\"linear_acceleration\":{\"x\":" + String(aaWorld.x * mpu.get_acce_resolution() * EARTH_GRAVITY_MS2) + ",\"y\":" + String(aaWorld.y * mpu.get_acce_resolution() * EARTH_GRAVITY_MS2) + ",\"z\":" + String(aaWorld.z * mpu.get_acce_resolution() * EARTH_GRAVITY_MS2) + "}}");
-
-        // data to send
+        // data format to send
         /*
         {
             "imu": {
@@ -208,7 +178,7 @@ void loop() {
         float pressure_temperature = lps35hw.readTemperature();
         float pressure_pressure = lps35hw.readPressure();
 
-        StaticJsonDocument<1024> response;
+        StaticJsonDocument<512> response;
 
         response["imu"]["orientation"]["w"] = imu_orientation_w;
         response["imu"]["orientation"]["x"] = imu_orientation_x;
@@ -223,7 +193,7 @@ void loop() {
         response["pressure"]["temperature"] = pressure_temperature;
         response["pressure"]["pressure"] = pressure_pressure;
 
-        char buffer[1024];
+        char buffer[512];
         serializeJson(response, buffer);
         Serial.println(buffer);
         delay(20);
@@ -237,6 +207,7 @@ void loop() {
         String receivedData = Serial.readStringUntil('\n');
         DeserializationError error = deserializeJson(request, receivedData);
 
+        // data format
         // {"controls": {"linear": {"x": 0.0, "y": 0.0, "z": 0.0}, "angular": {"x": 0.0, "y": 0.0, "z": 0.0}}}
 
         double x_vel = request["controls"]["linear"]["x"];
