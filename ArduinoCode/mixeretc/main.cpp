@@ -37,21 +37,63 @@ void setup() {
 }
 
 void loop() {
-    if (Serial.available()) {
+    if (Serial.available() >0) {
         //indicating the beginning of the communication
         Serial.println("begin");
         //reading the serial string until the end of the line
         String inputString = Serial.readStringUntil('\n');
         // Split the string and convert to doubles
         double Fx, Fy, Mz, Fx2, Fy2, Mz2;
+        if(Serial)
         int firstSpaceIndex = inputString.indexOf(' ');
-        int secondSpaceIndex = inputString.lastIndexOf(' ');
+        int secondSpaceIndex = inputString.lasindexOf(' ');
         Fx = inputString.substring(0, firstSpaceIndex).toDouble();
-        Fy = inputString.substring(firstSpaceIndex + 1, secondSpaceIndex).toDouble();
-        Mz = inputString.substring(secondSpaceIndex + 1).toDouble();
-        Fx2 = inputString.substring(0, firstSpaceIndex+1).toDouble();
-        Fy2 = inputString.substring(firstSpaceIndex + 2, secondSpaceIndex).toDouble();
-        Mz2 = inputString.substring(secondSpaceIndex + 2).toDouble();
+        Fy = inputString.substring(firstSpaceIndex, secondSpaceIndex).toDouble();
+        Mz = inputString.substring(secondSpaceIndex).toDouble();
+//        Fx2 = inputString.substring(thirdSpaceIndex).toDouble();
+//        Fy2 = inputString.substring(firstSpaceIndex + 2, secondSpaceIndex).toDouble();
+//        Mz2 = inputString.substring(secondSpaceIndex + 2).toDouble();
+
+//potential new parser
+//        if (Serial.available()>0) {
+//            //indicating the beginning of the communication
+//            Serial.println("begin");
+//            //reading the serial string until the end of the line
+//            char inputString = Serial.read();
+//            // Split the string and convert to doubles
+//            double Fx, Fy, Mz, Fx2, Fy2, Mz2;
+//            char buffer[20];
+//            int bufferIndex = 0;
+//            // int firstSpaceIndex = inputString.indexOf(' ');
+//            // int secondSpaceIndex = inputString.lastIndexOf(' ');
+//            if(inputString != " "){
+//                buffer[bufferIndex++] = inputString;
+//
+//                if(bufferIndex >= sizeof(buffer)){
+//                    bufferIndex = 0;
+//                }
+//            } else if (bufferIndex>0) {
+//                buffer[bufferIndex] = "\0";
+//                double parsedValue = atof(buffer);
+//                if(isnan(Fx)){
+//                    Fx = parsedValue;
+//                } else if (isnan(Fy)) {
+//                    Fy = parsedValue;
+//                } else if (isnan(Mz)) {
+//                    Mz = parsedValue;
+//                } else if (isnan(Fx2)) {
+//                    Fx2 = parsedValue;
+//                } else if (isnan(Fy2)) {
+//                    Fy2 = parsedValue;
+//                } else {
+//                    Mz2 = parsedValue;
+//                }
+//            }
+//            bufferIndex = 0;
+//            Wrench = {Fx,Fy,Mz, Fx2, Fy2, Mz2};
+//        }
+//        ;
+//    }
         /**initializing the wrench with the double values create above and using them
         to multiply by the ThreeDMixer to create a matrix that will convert the wrench
         values into PWM signals**/
