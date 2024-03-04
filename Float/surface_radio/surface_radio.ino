@@ -5,7 +5,7 @@ RF24 radio(7, 8); // CE, CSN pins
 const byte addresses[][6] = {"00001", "00002"};
 
 int hall_sensorPin1 = A5;
-int hall_sensorPin2 = A6;
+int hall_sensorPin2 = A4;
 int counter = 0;
 int sensorValue = 0;
 
@@ -33,23 +33,25 @@ void loop() {
     Serial.println(text);
   }
   // Check if there is a Serial input (from keyboard)
-  if (hall_sensorValue1 == 0) {
+  if (Serial.available()) {
     radio.stopListening(); // Stop listening to start writing
 
-    String input = String(hall_sensorValue1);
-    const char text[32] = "";
-    input.toCharArray((char*)text, 32);
-    radio.write(&text, sizeof(text));
-    radio.startListening(); // Listen for incoming messages again
-    delay(100); // Short delay to ensure message is sent
-  }else{
-    radio.stopListening(); // Stop listening to start writing
-
-    String input = String(hall_sensorValue1);
+    String input = Serial.readString();
+    input.trim();
     const char text[32] = "";
     input.toCharArray((char*)text, 32);
     radio.write(&text, sizeof(text));
     radio.startListening(); // Listen for incoming messages again
     delay(100); // Short delay to ensure message is sent
   }
+  // else{
+  //   radio.stopListening(); // Stop listening to start writing
+
+  //   String input = "goodbye";
+  //   const char text[32] = "";
+  //   input.toCharArray((char*)text, 32);
+  //   radio.write(&text, sizeof(text));
+  //   radio.startListening(); // Listen for incoming messages again
+  //   delay(100); // Short delay to ensure message is sent
+  // }
 }
