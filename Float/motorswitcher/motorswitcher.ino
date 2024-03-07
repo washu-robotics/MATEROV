@@ -1,11 +1,11 @@
 // motor control
-int motorPin1 = 6;  // AIN1 on the motor driver
-int motorPin2 = 5; // AIN2 on the motor driver
-int standbyPin = 7; // STBY on the motor driver
-int pwm = 12;
+int motorPin1 = 2;  // AIN1 on the motor driver
+int motorPin2 = 3; // AIN2 on the motor driver
+int standbyPin = 4; // STBY on the motor driver
+int pwm = 5;
 
 int hall_sensorPin1 = A5;
-int hall_sensorPin2 = A6;
+int hall_sensorPin2 = A4;
 int counter = 0;
 int sensorValue = 0;
 
@@ -39,16 +39,18 @@ void loop()
   int hall_sensorValue1 = digitalRead(hall_sensorPin1);
   int hall_sensorValue2 = digitalRead(hall_sensorPin2);
 
-  Serial.print(hall_sensorValue1);
-  Serial.print(" ");
-  Serial.println(hall_sensorValue2);
+  // Serial.print(hall_sensorValue1);
+  // Serial.print(" ");
+  // Serial.println(hall_sensorValue2);
   // delay(250);
 
 
   analogWrite(pwm, 255);
 
-  // Hall sensor 1
+  // Hall sensor 1 reach top
   if (hall_sensorValue1 == 0) {
+
+    Serial.println("hello");
     // Stop the motor
     digitalWrite(motorPin1, LOW);
     digitalWrite(motorPin2, LOW);
@@ -58,10 +60,10 @@ void loop()
     digitalWrite(motorPin1, HIGH);
     digitalWrite(motorPin2, LOW);
     analogWrite(pwm, 255);
-    delay(1000);
+    delay(100);
   }
 
-  // Hall sensor 2
+  // Hall sensor 2 reach bottom
   if (hall_sensorValue2 == 0) {
 
     // Stop the motor
@@ -73,7 +75,7 @@ void loop()
     digitalWrite(motorPin1, LOW);
     digitalWrite(motorPin2, HIGH);
     analogWrite(pwm, 255);
-    delay(1000);
+    delay(100);
   }
   
 

@@ -3,12 +3,16 @@
 #include <RF24.h>
 RF24 radio(7, 8); // CE, CSN pins
 const byte addresses[][6] = {"00001", "00002"};
+// motor control
+int motorPin1 = 2;  // AIN1 on the motor driver
+int motorPin2 = 3; // AIN2 on the motor driver
+int standbyPin = 4; // STBY on the motor driver
+int pwm = 5;
 
 int hall_sensorPin1 = A5;
 int hall_sensorPin2 = A4;
 int counter = 0;
-int prevSensorValue1 = 1;
-int prevSensorValue2 = 1;
+int sensorValue = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -18,78 +22,101 @@ void setup() {
   radio.openReadingPipe(1, addresses[0]); // Use the second address to read
   radio.startListening();
 
+  // motor pins
+  pinMode(motorPin1, OUTPUT);
+  pinMode(motorPin2, OUTPUT);
+  pinMode(standbyPin, OUTPUT);
+  pinMode(pwm, OUTPUT);
+  digitalWrite(standbyPin, HIGH); 
+
+  digitalWrite(motorPin1, HIGH);
+  digitalWrite(motorPin2, LOW);
+
+  // magnet pins
   pinMode(hall_sensorPin1, INPUT);
   pinMode(hall_sensorPin2, INPUT);
 
+  // initial movement
+  digitalWrite(motorPin2, LOW);
+  digitalWrite(motorPin1, LOW);
 }
+
+
+//use radio input
 void loop() {
 
   int hall_sensorValue1 = digitalRead(hall_sensorPin1);
   int hall_sensorValue2 = digitalRead(hall_sensorPin2);
 
-  // Check if there is a reading available
-  if (radio.available()) {
+  if (radio.available()){
+
+    radio.stopListening();
     char text[32] = "";
     radio.read(&text, sizeof(text));
     Serial.println(text);
 
-    // Send confirmation receipt
-    if (String(text) == "start"){
-      radio.stopListening(); // Stop listening to start writing
-      String input = "\nCommand Received\n";
+    if (String(text)=="up\n"){
 
-      const char response[32] = "";
-      input.toCharArray((char*)response, 32);
-      radio.write(&response, sizeof(response));
-      radio.startListening(); // Listen for incoming messages again
-      delay(100); // Short delay to ensure message is sent
-    }
+      while(hall_sensorValue1==1){
+        hall_sensorValue1 = digitalRead(hall_sensorPin1);
+        digitalWrite(motorPin1, LOW);
+        digitalWrite(motorPin2, HIGH);
+        analogWrite(pwm, 255);
+      }
 
-    else {
-      radio.stopListening(); // Stop listening to start writing
-      String input = "\nInvalid Command\n";
+    }else if (String(text)=="down\n"){
 
-      const char response[32] = "";
-      input.toCharArray((char*)response, 32);
-      radio.write(&response, sizeof(response));
-      radio.startListening(); // Listen for incoming messages again
-      delay(100); // Short delay to ensure message is sent
+      while(hall_sensorValue2==1){
+        hall_sensorValue2 = digitalRead(hall_sensorPin2);
+        digitalWrite(motorPin1, HIGH);
+        digitalWrite(motorPin2, LOW);
+        analogWrite(pwm, 255);
+      }
+
+    }else{
+
+      Serial.println("Invalid Input");
 
     }
   }
 
-  radio.stopListening(); // Stop listening to start writing
+//use serial input
+    if (Serial.available()){
 
-  String packet = String(hall_sensorValue1) + String(hall_sensorValue2);
-  const char text[32] = "";
-  packet.toCharArray((char*)text, 32);
-  radio.write(&text, sizeof(text));
-  radio.startListening(); // Listen for incoming messages again
-  delay(100); // Short delay to ensure message is sent
+    String input = Serial.readStringUntil("\n");
+    Serial.println(input);
+
+    if (input=="up\n"){
+
+      while(hall_sensorValue1==1){
+        hall_sensorValue1 = digitalRead(hall_sensorPin1);
+        digitalWrite(motorPin1, LOW);
+        digitalWrite(motorPin2, HIGH);
+        analogWrite(pwm, 255);
+      }
+
+    }else if (input=="down\n"){
+
+      while(hall_sensorValue2==1){
+        hall_sensorValue2 = digitalRead(hall_sensorPin2);
+        digitalWrite(motorPin1, HIGH);
+        digitalWrite(motorPin2, LOW);
+        analogWrite(pwm, 255);
+      }
+
+    }else{
+
+      Serial.println("Invalid Input");
+
+    }
+  }
+
+
+  digitalWrite(motorPin1, LOW);
+  digitalWrite(motorPin2, LOW);
+  radio.startListening();
+
 }
 
 
-    // // Check if there is a signal change from the hall sesnsors
-  // if (hall_sensorValue1 != prevSensorValue1 || hall_sensorValue2 != prevSensorValue2) {
-  //   radio.stopListening(); // Stop listening to start writing
 
-  //   String input = String(hall_sensorValue1) + String(hall_sensorValue2);
-  //   const char text[32] = "";
-  //   input.toCharArray((char*)text, 32);
-  //   radio.write(&text, sizeof(text));
-  //   radio.startListening(); // Listen for incoming messages again
-  //   delay(100); // Short delay to ensure message is sent
-  // }
-  // else{
-  //   radio.stopListening(); // Stop listening to start writing
-
-  //   String input = String(hall_sensorValue1) + String(hall_sensorValue2);
-  //   const char text[32] = "";
-  //   input.toCharArray((char*)text, 32);
-  //   radio.write(&text, sizeof(text));
-  //   radio.startListening(); // Listen for incoming messages again
-  //   delay(100); // Short delay to ensure message is sent
-  // }
-
-  // prevSensorValue1 = hall_sensorValue1;
-  // prevSensorValue2 = hall_sensorValue2;
