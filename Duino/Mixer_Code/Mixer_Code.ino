@@ -89,8 +89,8 @@ void loop() {
           String inputString = Serial.readStringUntil('\n'); // Read the incoming string until newline character
           int* Wrench_vector=parseString(inputString); // Parse the string into integers
 
-            Wrench = {Wrench_vector[0],Wrench_vector[1],Wrench_vector[2], Wrench_vector[3], Wrench_vector[4], Wrench_vector[5]};
-            Serial << "Wrench: " << Wrench << '\n';
+          Wrench = {Wrench_vector[0],Wrench_vector[1],Wrench_vector[2], Wrench_vector[3], Wrench_vector[4], Wrench_vector[5]};
+          Serial << "Wrench: " << Wrench << '\n';
       
         /**initializing the wrench with the double values create above and using them
         to multiply by the ThreeDMixer to create a matrix that will convert the wrench

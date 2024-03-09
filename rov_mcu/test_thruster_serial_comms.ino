@@ -64,6 +64,7 @@ void loop() {
 
   if (error) {
     response["error"] = "Failed to parse request: " + String(error.f_str());
+    processThrusterCmd(0, 0, 0);
   } else {
     double x_vel = request["controls"]["linear"]["x"];
     double y_vel = request["controls"]["linear"]["y"];

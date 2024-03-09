@@ -39,7 +39,7 @@ class BidirectionalSerialNode : public rclcpp::Node
         RCLCPP_FATAL(this->get_logger(), "The serial port did not open correctly.");
         serial_port.Close();
       }
-      serial_port.SetBaudRate(BaudRate::BAUD_19200); // using high baud rate for faster round trip time
+      serial_port.SetBaudRate(BaudRate::BAUD_38400); // using high baud rate for faster round trip time
       last_serial_read_time_ = this->now();
 
       RCLCPP_INFO(this->get_logger(), "BidirectionalSerial node has been started.");
@@ -113,6 +113,7 @@ class BidirectionalSerialNode : public rclcpp::Node
 
       string response = serial_comm(json);
       RCUTILS_LOG_INFO("Response: %s", response.c_str());
+      RCLCPP_INFO(this->get_logger(), "Sent to Arduino: '%s'", json.c_str());
 
       // TODO: Parse response and publish to a topic
     }
