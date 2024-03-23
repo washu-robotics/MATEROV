@@ -16,13 +16,14 @@ void loop() {
   if (radio.available()) {
     char text[32] = "";
     radio.read(&text, sizeof(text));
-    Serial.println("here");
+    Serial.println(String(text));
   }
   // Check if there is a Serial input (from keyboard)
   if (Serial.available()) {
-    Serial.print("here");
     radio.stopListening(); // Stop listening to start writing
     String input = Serial.readStringUntil("\n");
+    input.trim();
+    Serial.println(input);
     const char text[32] = "";
     input.toCharArray((char*)text, 32);
     radio.write(&text, sizeof(text));

@@ -4,8 +4,8 @@ int motorPin2 = 3; // AIN2 on the motor driver
 int standbyPin = 4; // STBY on the motor driver
 int pwm = 5;
 
-int hall_sensorPin1 = A5;
-int hall_sensorPin2 = A4;
+int hall_sensorPin1 = A4;
+int hall_sensorPin2 = A3;
 int counter = 0;
 int sensorValue = 0;
 

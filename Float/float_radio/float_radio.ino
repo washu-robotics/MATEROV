@@ -4,13 +4,17 @@
 RF24 radio(7, 8); // CE, CSN pins
 const byte addresses[][6] = {"00001", "00002"};
 // motor control
+// int motorPin1 = 2;  // AIN1 on the motor driver
+// int motorPin2 = 3; // AIN2 on the motor driver
+// int standbyPin = 4; // STBY on the motor driver
+// int pwm = 5;
 int motorPin1 = 2;  // AIN1 on the motor driver
 int motorPin2 = 3; // AIN2 on the motor driver
 int standbyPin = 4; // STBY on the motor driver
 int pwm = 5;
 
-int hall_sensorPin1 = A5;
-int hall_sensorPin2 = A4;
+int hall_sensorPin1 = A5; //green
+int hall_sensorPin2 = A4; //blue
 int counter = 0;
 int sensorValue = 0;
 
@@ -55,7 +59,7 @@ void loop() {
     radio.read(&text, sizeof(text));
     Serial.println(text);
 
-    if (String(text)=="up\n"){
+    if (String(text)=="up"){
 
       while(hall_sensorValue1==1){
         hall_sensorValue1 = digitalRead(hall_sensorPin1);
@@ -64,7 +68,7 @@ void loop() {
         analogWrite(pwm, 255);
       }
 
-    }else if (String(text)=="down\n"){
+    }else if (String(text)=="down"){
 
       while(hall_sensorValue2==1){
         hall_sensorValue2 = digitalRead(hall_sensorPin2);
@@ -73,9 +77,29 @@ void loop() {
         analogWrite(pwm, 255);
       }
 
-    }else{
+    }
+    else if (String(text)=="test"){
 
-      Serial.println("Invalid Input");
+      while(hall_sensorValue2==1){
+        hall_sensorValue2 = digitalRead(hall_sensorPin2);
+        digitalWrite(motorPin1, HIGH);
+        digitalWrite(motorPin2, LOW);
+        analogWrite(pwm, 255);
+      }
+
+      delay(60000);
+      hall_sensorValue1 = digitalRead(hall_sensorPin1);
+      while(hall_sensorValue1==1){
+        hall_sensorValue1 = digitalRead(hall_sensorPin1);
+        digitalWrite(motorPin1, LOW);
+        digitalWrite(motorPin2, HIGH);
+        analogWrite(pwm, 255);
+      }
+    }
+    
+    else{
+
+      Serial.println("Invalid Radio Input");
 
     }
   }
@@ -84,9 +108,10 @@ void loop() {
     if (Serial.available()){
 
     String input = Serial.readStringUntil("\n");
+    input.trim();
     Serial.println(input);
 
-    if (input=="up\n"){
+    if (input=="up"){
 
       while(hall_sensorValue1==1){
         hall_sensorValue1 = digitalRead(hall_sensorPin1);
@@ -95,7 +120,7 @@ void loop() {
         analogWrite(pwm, 255);
       }
 
-    }else if (input=="down\n"){
+    }else if (input=="down"){
 
       while(hall_sensorValue2==1){
         hall_sensorValue2 = digitalRead(hall_sensorPin2);
@@ -104,9 +129,27 @@ void loop() {
         analogWrite(pwm, 255);
       }
 
-    }else{
+    }else if (input=="test"){
 
-      Serial.println("Invalid Input");
+      while(hall_sensorValue2==1){
+        hall_sensorValue2 = digitalRead(hall_sensorPin2);
+        digitalWrite(motorPin1, HIGH);
+        digitalWrite(motorPin2, LOW);
+        analogWrite(pwm, 255);
+      }
+
+      delay(60000);
+      hall_sensorValue1 = digitalRead(hall_sensorPin1);
+      while(hall_sensorValue1==1){
+        hall_sensorValue1 = digitalRead(hall_sensorPin1);
+        digitalWrite(motorPin1, LOW);
+        digitalWrite(motorPin2, HIGH);
+        analogWrite(pwm, 255);
+      }
+    }
+    else{
+
+      Serial.println("Invalid Serial Input");
 
     }
   }
