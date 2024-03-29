@@ -18,6 +18,23 @@ int hall_sensorPin2 = A4; //blue
 int counter = 0;
 int sensorValue = 0;
 
+
+//pressure sensor setup
+#include <Adafruit_LPS35HW.h>
+
+Adafruit_LPS35HW lps35hw = Adafruit_LPS35HW();
+
+// For SPI mode, we need a CS pin, Yellow
+#define LPS_CS  10
+//blue
+#define LPS_SCK  34
+//green
+#define LPS_MISO 12
+//pink
+#define LPS_MOSI 11
+
+
+
 void setup() {
   Serial.begin(9600);
   radio.begin();
@@ -43,7 +60,44 @@ void setup() {
   // initial movement
   digitalWrite(motorPin2, LOW);
   digitalWrite(motorPin1, LOW);
+
+  if (!lps35hw.begin_SPI(LPS_CS, LPS_SCK, LPS_MISO, LPS_MOSI)) {
+  Serial.println("Couldn't find LPS35HW chip");
+  delay(500);
+  }
+  Serial.println("Found LPS35HW chip");
+
+
 }
+
+int *dynamicList = NULL; 
+int listSize = 0;  
+
+void addElement(int element) {
+  int *temp = (int *)realloc(dynamicList, (listSize + 1) * sizeof(int));
+  if (temp != NULL) {
+    dynamicList = temp;
+    dynamicList[listSize] = element;
+    listSize++;
+  } else {
+    Serial.println("Failed to allocate memory.");
+  }
+}
+
+void printList() {
+  Serial.println("List Contents:");
+  for (int i = 0; i < listSize; i++) {
+    Serial.print(dynamicList[i]);
+    Serial.print(", ");
+  }
+}
+
+void freeList() {
+  free(dynamicList);
+  dynamicList = NULL;
+  listSize = 0;
+}
+
 
 
 //use radio input
@@ -79,22 +133,47 @@ void loop() {
 
     }
     else if (String(text)=="test"){
+      float pres = 0;
 
       while(hall_sensorValue2==1){
         hall_sensorValue2 = digitalRead(hall_sensorPin2);
         digitalWrite(motorPin1, HIGH);
         digitalWrite(motorPin2, LOW);
         analogWrite(pwm, 255);
+        pres = lps35hw.readPressure();
+        addElement(pres);
+        Serial.print("Pressure: ");
+        Serial.print(lps35hw.readPressure());
+        Serial.println(" hPa");
+        delay(100);
       }
 
-      delay(60000);
+      for (int i = 0; i<10; i++){
+        pres = lps35hw.readPressure();
+        addElement(pres);
+        Serial.print("Pressure: ");
+        Serial.print(lps35hw.readPressure());
+        Serial.println(" hPa");
+        delay(100);
+      }
+
       hall_sensorValue1 = digitalRead(hall_sensorPin1);
       while(hall_sensorValue1==1){
         hall_sensorValue1 = digitalRead(hall_sensorPin1);
         digitalWrite(motorPin1, LOW);
         digitalWrite(motorPin2, HIGH);
         analogWrite(pwm, 255);
+        pres = lps35hw.readPressure();
+        addElement(pres);
+        Serial.print("Pressure: ");
+        Serial.print(lps35hw.readPressure());
+        Serial.println(" hPa");
+        delay(100);
       }
+      printList();
+      freeList();
+      radio.startListening();
+
     }
     
     else{
@@ -102,6 +181,7 @@ void loop() {
       Serial.println("Invalid Radio Input");
 
     }
+
   }
 
 //use serial input
@@ -138,7 +218,6 @@ void loop() {
         analogWrite(pwm, 255);
       }
 
-      delay(60000);
       hall_sensorValue1 = digitalRead(hall_sensorPin1);
       while(hall_sensorValue1==1){
         hall_sensorValue1 = digitalRead(hall_sensorPin1);
@@ -154,10 +233,11 @@ void loop() {
     }
   }
 
+digitalWrite(motorPin1, LOW);
+digitalWrite(motorPin2, LOW);
+radio.startListening();
 
-  digitalWrite(motorPin1, LOW);
-  digitalWrite(motorPin2, LOW);
-  radio.startListening();
+
 
 }
 

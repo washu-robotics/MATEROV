@@ -5,12 +5,14 @@ Adafruit_LPS35HW lps35hw = Adafruit_LPS35HW();
 // For SPI mode, we need a CS pin
 #define LPS_CS  10
 // For software-SPI mode we need SCK/MOSI/MISO pins
-#define LPS_SCK  13
+//blue
+#define LPS_SCK  34
+
 #define LPS_MISO 12
 #define LPS_MOSI 11
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   // Wait until serial port is opened
   while (!Serial) { delay(1); }
 
@@ -35,5 +37,5 @@ void loop() {
   Serial.println(" hPa");
 
   Serial.println();
-  delay(100);
+  delay(1000);
 }
