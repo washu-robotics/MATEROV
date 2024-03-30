@@ -89,7 +89,12 @@ void printList() {
   for (int i = 0; i < listSize; i++) {
     Serial.print(dynamicList[i]);
     Serial.print(", ");
+    const char text[32] = "";
+    String datum = String(dynamicList[i]);
+    datum.toCharArray((char*)text, 32);
+    radio.write(&text, sizeof(text));
   }
+
 }
 
 void freeList() {
@@ -143,18 +148,18 @@ void loop() {
         pres = lps35hw.readPressure();
         addElement(pres);
         Serial.print("Pressure: ");
-        Serial.print(lps35hw.readPressure());
+        Serial.print(lps35hw.readPressure()/10);
         Serial.println(" hPa");
-        delay(100);
+        delay(1000);
       }
 
       for (int i = 0; i<10; i++){
         pres = lps35hw.readPressure();
         addElement(pres);
         Serial.print("Pressure: ");
-        Serial.print(lps35hw.readPressure());
+        Serial.print(lps35hw.readPressure()/10);
         Serial.println(" hPa");
-        delay(100);
+        delay(1000);
       }
 
       hall_sensorValue1 = digitalRead(hall_sensorPin1);
@@ -166,9 +171,9 @@ void loop() {
         pres = lps35hw.readPressure();
         addElement(pres);
         Serial.print("Pressure: ");
-        Serial.print(lps35hw.readPressure());
+        Serial.print(lps35hw.readPressure()/10);
         Serial.println(" hPa");
-        delay(100);
+        delay(1000);
       }
       printList();
       freeList();

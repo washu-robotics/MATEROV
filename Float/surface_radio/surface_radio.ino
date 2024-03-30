@@ -16,7 +16,8 @@ void loop() {
   if (radio.available()) {
     char text[32] = "";
     radio.read(&text, sizeof(text));
-    Serial.println(String(text));
+    float depth = (String(text).toInt() - 995)*0.10197;
+    Serial.println(depth);
   }
   // Check if there is a Serial input (from keyboard)
   if (Serial.available()) {
