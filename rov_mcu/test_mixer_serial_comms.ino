@@ -2,7 +2,7 @@
 #include <Servo.h>
 #include <Adafruit_LPS35HW.h>
 #include <BasicLinearAlgebra.h> 
-#include <Math.h>
+#include <math.h>
 
 // Thrusters
 Servo motor0;
@@ -64,6 +64,14 @@ Adafruit_LPS35HW lps35hw = Adafruit_LPS35HW();
 #define LPS_MISO 12
 #define LPS_MOSI 11
 
+double mapValue(float inVal, float inLow, float inHigh, float outLow, float outHigh)
+{
+  double outVal = (inVal - inLow) * (outHigh - outLow) / (inHigh - inLow) + outLow;
+
+  return outVal;
+}
+
+
 void motorSetup() {
   for (int i = 0; i < 6; i++) {
     motors[i].attach(i);
@@ -82,7 +90,7 @@ void setup() {
   Serial.setTimeout(50);
 
   motorSetup();
-  sensorSetup();
+  //sensorSetup();
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
@@ -127,6 +135,9 @@ void loop() {
     double pitch = 0;//request["controls"]["angular"]["y"];
     double yaw = request["controls"]["angular"]["z"];
 
+    
+  //Serial.println(x_vel);
+
     int MAX_XYZ = 30;
     int MAX_ROLL = 10;
     int MAX_YAW = 10;
@@ -137,8 +148,10 @@ void loop() {
     int MIN_PITCH = 0;
 
     // Wrench = {x_vel, y_vel, z_vel, roll, pitch, yaw};
-    Wrench = {map(x_vel, -1, 1, MIN_XYZ, MAX_XYZ), map(y_vel, -1, 1, MIN_XYZ, MAX_XYZ), map(z_vel, -1, 1, MIN_XYZ, MAX_XYZ), 0, 0, map(yaw, -1.5, 1.5, MIN_YAW, MAX_YAW)};
+    // Wrench = {map(x_vel, -1, 1, MIN_XYZ, MAX_XYZ), map(y_vel, -1, 1, MIN_XYZ, MAX_XYZ), map(z_vel, -1, 1, MIN_XYZ, MAX_XYZ), 0, 0, map(yaw, -1.5, 1.5, MIN_YAW, MAX_YAW)};
+    Wrench = {mapValue(x_vel, -0.5, 0.5, MIN_XYZ, MAX_XYZ), mapValue(y_vel, -0.5, 0.5, MIN_XYZ, MAX_XYZ), mapValue(z_vel, -0.5, 0.5, MIN_XYZ, MAX_XYZ), 0, 0, mapValue(yaw, -0.5, 0.5, MIN_YAW, MAX_YAW)};
   }
+
 
   N = Mixer * Wrench;
   PWM = {nSquared_to_PWM_CW(N(0)),nSquared_to_PWM_CCW(N(1)),nSquared_to_PWM_CW(N(2)), nSquared_to_PWM_CCW(N(3)),nSquared_to_PWM_CW(N(4)),nSquared_to_PWM_CCW(N(5))};
@@ -160,4 +173,3 @@ void loop() {
   serializeJson(response, buffer);
   Serial.println(buffer);
 }
-
