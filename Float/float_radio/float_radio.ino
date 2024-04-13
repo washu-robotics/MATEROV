@@ -38,10 +38,14 @@ Adafruit_LPS35HW lps35hw = Adafruit_LPS35HW();
 void setup() {
   Serial.begin(9600);
   radio.begin();
-  radio.setPALevel(RF24_PA_MIN);
+  
   radio.openWritingPipe(addresses[1]); // Use the first address to write
   radio.openReadingPipe(1, addresses[0]); // Use the second address to read
+  radio.setPALevel(RF24_PA_MIN);
+  radio.setDataRate(RF24_250KBPS);
+  radio.setChannel(80);
   radio.startListening();
+
 
   // motor pins
   pinMode(motorPin1, OUTPUT);
@@ -180,6 +184,45 @@ void loop() {
       radio.startListening();
 
     }
+    else if (String(text)=="test2"){
+      float pres = 0;
+
+      digitalWrite(motorPin1, HIGH);
+      digitalWrite(motorPin2, LOW);
+      analogWrite(pwm, 255);
+      pres = lps35hw.readPressure();
+      addElement(pres);
+      Serial.print("Pressure: ");
+      Serial.print(lps35hw.readPressure()/10);
+      Serial.println(" hPa");
+      delay(7000);
+      digitalWrite(motorPin1, LOW);
+
+      for (int i = 0; i<10; i++){
+        pres = lps35hw.readPressure();
+        addElement(pres);
+        Serial.print("Pressure: ");
+        Serial.print(lps35hw.readPressure()/10);
+        Serial.println(" hPa");
+        delay(1000);
+      }
+
+      digitalWrite(motorPin1, LOW);
+      digitalWrite(motorPin2, HIGH);
+      analogWrite(pwm, 255);
+      pres = lps35hw.readPressure();
+      addElement(pres);
+      Serial.print("Pressure: ");
+      Serial.print(lps35hw.readPressure()/10);
+      Serial.println(" hPa");
+      delay(7000);
+      digitalWrite(motorPin2, LOW);
+
+      printList();
+      freeList();
+      radio.startListening();
+
+    }  
     
     else{
 
@@ -215,13 +258,31 @@ void loop() {
       }
 
     }else if (input=="test"){
+      float pres = 0;
 
       while(hall_sensorValue2==1){
         hall_sensorValue2 = digitalRead(hall_sensorPin2);
         digitalWrite(motorPin1, HIGH);
         digitalWrite(motorPin2, LOW);
         analogWrite(pwm, 255);
+        pres = lps35hw.readPressure();
+        addElement(pres);
+        Serial.print("Pressure: ");
+        Serial.print(lps35hw.readPressure()/10);
+        Serial.println(" hPa");
+        delay(1000);
       }
+
+      for (int i = 0; i<10; i++){
+        pres = lps35hw.readPressure();
+        addElement(pres);
+        Serial.print("Pressure: ");
+        Serial.print(lps35hw.readPressure()/10);
+        Serial.println(" hPa");
+        delay(1000);
+      }
+
+      printList();
 
       hall_sensorValue1 = digitalRead(hall_sensorPin1);
       while(hall_sensorValue1==1){
@@ -229,7 +290,52 @@ void loop() {
         digitalWrite(motorPin1, LOW);
         digitalWrite(motorPin2, HIGH);
         analogWrite(pwm, 255);
+        pres = lps35hw.readPressure();
+        addElement(pres);
+        Serial.print("Pressure: ");
+        Serial.print(lps35hw.readPressure()/10);
+        Serial.println(" hPa");
+        delay(1000);
       }
+    }
+    else if (input=="test2"){
+      float pres = 0;
+
+      digitalWrite(motorPin1, HIGH);
+      digitalWrite(motorPin2, LOW);
+      analogWrite(pwm, 255);
+      pres = lps35hw.readPressure();
+      addElement(pres);
+      Serial.print("Pressure: ");
+      Serial.print(lps35hw.readPressure()/10);
+      Serial.println(" hPa");
+      delay(7000);
+      digitalWrite(motorPin1, LOW);
+
+      for (int i = 0; i<10; i++){
+        pres = lps35hw.readPressure();
+        addElement(pres);
+        Serial.print("Pressure: ");
+        Serial.print(lps35hw.readPressure()/10);
+        Serial.println(" hPa");
+        delay(1000);
+      }
+
+      digitalWrite(motorPin1, LOW);
+      digitalWrite(motorPin2, HIGH);
+      analogWrite(pwm, 255);
+      pres = lps35hw.readPressure();
+      addElement(pres);
+      Serial.print("Pressure: ");
+      Serial.print(lps35hw.readPressure()/10);
+      Serial.println(" hPa");
+      delay(7000);
+      digitalWrite(motorPin2, LOW);
+
+      printList();
+      freeList();
+      radio.startListening();
+
     }
     else{
 
