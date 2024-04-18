@@ -9,8 +9,13 @@ void setup() {
   radio.setPALevel(RF24_PA_MIN);
   radio.openWritingPipe(addresses[0]); // Use the first address to write
   radio.openReadingPipe(1, addresses[1]); // Use the second address to read
+  radio.setDataRate(RF24_250KBPS);
+  radio.setChannel(80);
   radio.startListening();
 }
+
+void(* resetFunc) (void) = 0; //declare reset function @ address 0
+
 void loop() {
   // Check if there is a reading available
   if (radio.available()) {

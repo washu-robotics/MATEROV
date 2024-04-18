@@ -107,7 +107,7 @@ void freeList() {
   listSize = 0;
 }
 
-
+void(* resetFunc) (void) = 0; //declare reset function @ address 0
 
 //use radio input
 void loop() {
@@ -195,7 +195,16 @@ void loop() {
       Serial.print("Pressure: ");
       Serial.print(lps35hw.readPressure()/10);
       Serial.println(" hPa");
-      delay(7000);
+
+      for (int i = 0; i<10; i++){
+        pres = lps35hw.readPressure();
+        addElement(pres);
+        Serial.print("Pressure: ");
+        Serial.print(lps35hw.readPressure()/10);
+        Serial.println(" hPa");
+        delay(1000);
+      }
+
       digitalWrite(motorPin1, LOW);
 
       for (int i = 0; i<10; i++){
@@ -215,12 +224,39 @@ void loop() {
       Serial.print("Pressure: ");
       Serial.print(lps35hw.readPressure()/10);
       Serial.println(" hPa");
-      delay(7000);
+
+      for (int i = 0; i<10; i++){
+        pres = lps35hw.readPressure();
+        addElement(pres);
+        Serial.print("Pressure: ");
+        Serial.print(lps35hw.readPressure()/10);
+        Serial.println(" hPa");
+        delay(1000);
+      }
+      
       digitalWrite(motorPin2, LOW);
 
       printList();
       freeList();
       radio.startListening();
+
+    }
+    if (String(text)=="up2"){
+
+      digitalWrite(motorPin1, LOW);
+      digitalWrite(motorPin2, HIGH);
+      analogWrite(pwm, 255);
+      delay(15000);
+      digitalWrite(motorPin2, LOW);
+      
+
+    }else if (String(text)=="down2"){
+
+      digitalWrite(motorPin1, HIGH);
+      digitalWrite(motorPin2, LOW);
+      analogWrite(pwm, 255);
+      delay(15000);
+      digitalWrite(motorPin1, LOW);
 
     }  
     
